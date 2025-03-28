@@ -1,19 +1,39 @@
 name: Bicep Code Run
+# on:
+#   push:
+#     branches: 
+#     #- master
+#      - none
+#     paths-ignore:
+#     - "*.md"
+#     - main
+#     - master
+#   pull_request:
+#     branches: 
+#     - master
+# permissions:
+#   id-token: write
+#   contents: read
 on:
-  push:
-    branches: 
-    #- master
-     - none
-    paths-ignore:
-    - "*.md"
-    - main
-    - master
-  pull_request:
-    branches: 
-    - master
-permissions:
-  id-token: write
-  contents: read
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Terraform Test'
+        required: false
+        type: boolean
+      environment:
+        description: 'Environment to run Terraform Tests'
+        type: environment
+        required: true
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
