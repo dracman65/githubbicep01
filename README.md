@@ -12,8 +12,8 @@
 
 # Azure GitActions Deployment
 
-- Create app registration.
+- Create app registration in Azure.
 - After app registration, add permissions to the app registration. Click Certificate & secrets. Federal Credentials. Add in the ORG and Repo.
-- Go to Subscription. Add a Role Assignment for the app registration. Contributor should be selected. You will have to type in the app name in order to see it.
+- Go to Subscription. Add a new Role Assignment for the app registration. Contributor should be selected. You will have to type in the app name in order to see it. Save
 - Add the app and then run the GitActions workflows.
 - See this repo for GitActions pipeline.
