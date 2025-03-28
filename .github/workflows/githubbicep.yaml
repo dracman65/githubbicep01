@@ -1,0 +1,41 @@
+name: Bicep Code Run
+on:
+  push:
+    branches: 
+    #- master
+     - none
+    paths-ignore:
+    - "*.md"
+    - main
+    - master
+  pull_request:
+    branches: 
+    - master
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        #resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./main.bicep
+        parameters: './parameters/github-bicep-var.bicepparam'
+        failOnStdErr: false

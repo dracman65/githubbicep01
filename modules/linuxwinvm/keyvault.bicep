@@ -50,7 +50,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalId: uamiObjectId
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
-      '00482a5a-887f-4fb3-b363-3b7fe8e74483' // Key Vault Secrets Contributor role
+      '00482a5a-887f-4fb3-b363-3b7fe8e74483' // Key Vault Contributor role
     )
     principalType: 'User'
   }
