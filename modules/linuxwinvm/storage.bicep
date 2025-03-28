@@ -34,6 +34,7 @@ var storageNameCleaned = replace(storageName, '-', '')
 
 // Storage Account \\
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  #disable-next-line warning BCP081
   name: storageNameCleaned
   location: location
   tags: tags
