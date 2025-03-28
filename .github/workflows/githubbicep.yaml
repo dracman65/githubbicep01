@@ -33,7 +33,7 @@ on:
       environment:
         description: 'Environment to run Bicep GitHub Tests'
         type: environment
-        required: true
+        required: false
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
