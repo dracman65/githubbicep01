@@ -72,7 +72,7 @@ jobs:
         type: deployment
         operation: create
         name: Test
-        #location: eastus
+        location: eastus2
         scope: subscription
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         template-file: ./main.bicep
