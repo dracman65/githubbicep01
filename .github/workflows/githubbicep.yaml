@@ -27,11 +27,11 @@ on:
         - warning
         - debug
       tags:
-        description: 'Terraform Test'
+        description: 'Bicep Pipeline Test'
         required: false
         type: boolean
       environment:
-        description: 'Environment to run Terraform Tests'
+        description: 'Environment to run Bicep GitHub Tests'
         type: environment
         required: true
 jobs:
