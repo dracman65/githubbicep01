@@ -10,7 +10,7 @@
 
 - az deployment sub create --name dsdghdep06 --location 'eastus2' --parameters .\parameters\github-bicep-var.bicepparam --template-file main.bicep
 
-# Azure GitActions Deployment
+## Azure GitActions Deployment
 
 - Create app registration in Azure.
 - After app registration, add permissions to the app registration. Click Certificate & secrets. Federal Credentials. Add in the ORG and Repo.
