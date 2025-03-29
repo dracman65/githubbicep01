@@ -14,6 +14,6 @@
 
 - Create app registration in Azure.
 - After app registration, add permissions to the app registration. Click Certificate & secrets. Federal Credentials. Add in the ORG and Repo.
-- Go to Subscription. Add a new Role Assignment for the app registration. Contributor should be selected. You will have to type in the app name in order to see it. Save
+- Go to Subscription. Add a new Role Assignment for the app registration. You will need to make a custom role - Contributor and edit it, removing write and delete. You need write and delete for the Key Vault permissions. Save new role. You will have to type in the app name in order to see it. Save
 - Add the app and then run the GitActions workflows.
 - See this repo for GitActions pipeline.
