@@ -2,6 +2,8 @@
 param location string
 param tags object
 
+// Virtual Network \\
+
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
   name: 'ghvnetnet01'
   location: location
@@ -22,6 +24,8 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
     ]
   }
 }
+
+// Output \\
 
 output vnetid string = virtualNetwork.id
 output subnetid string = virtualNetwork.properties.subnets[0].id
