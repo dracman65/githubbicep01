@@ -1,4 +1,4 @@
-//Parameters
+//Parameters \\
 param location string
 param tags object
 param vnetName string
@@ -15,7 +15,7 @@ param vmUserName string
 param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().id)}')
 @secure()
 
-// Allowed Linux VM
+// Allowed Linux VM \\
 @allowed([
   'Ubuntu-2404-Server' //LTS
   'Ubuntu-2204-LTS' //LTS
@@ -38,7 +38,7 @@ var vmSize = 'Standard_B1ms' //'Standard_DS1_v2' //Standard_B1s
 
 // New Linux Sizes for Azure: https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/?msockid=211aac7bdedb641f0560b9dfdf7665bb
 
-//Security Type
+// Security Type \\
 @description('Security Type of the Virtual Machine.')
 @allowed([
   'Standard'
@@ -138,6 +138,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
 }
 
 resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = if (securityType == 'TrustedLaunch' && securityProfileJson.uefiSettings.secureBootEnabled && securityProfileJson.uefiSettings.vTpmEnabled) {
+  dependsOn: [vm]
   parent: vm
   name: extensionName
   location: location
@@ -203,19 +204,6 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-0
   properties: {
     securityRules: [
       {
-        name: 'RDP'
-        properties: {
-          priority: 300
-          protocol: 'Tcp'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourceAddressPrefix: '*'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '3389'
-        }
-      }
-      {
         name: 'SSH'
         properties: {
           priority: 310
@@ -228,7 +216,70 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-0
           destinationPortRange: '22'
         }
       }
+      {
+        name: 'HTTP'
+        properties: {
+          priority: 320
+          protocol: 'Tcp'
+          access: 'Allow'
+          direction: 'Inbound'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '80' //for NGINX Landing Page
+        }
+      }
     ]
+  }
+}
+
+resource deploynginx 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' = {
+  dependsOn: [vmExtension]
+  parent: vm
+  name: 'installApache'
+  location: location
+  properties: {
+    source: {
+      script: '''
+                # Update the list of packages.
+                sudo apt update;
+                # Update the list of packages.
+                sudo apt install -y nginx;
+                # Start Nginx
+                sudo systemctl start nginx;
+                # Enable Nginx on boot
+                sudo systemctl enable nginx
+                #Set TimeZone
+                sudo timedatectl set-timezone America/New_York
+                '''
+      }
+   }
+}
+
+resource deploypwsh 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' = {
+  dependsOn: [vmExtension]
+  parent: vm
+  name: 'InstallPowerShell'
+  location: location
+  properties: {
+    source: {
+      script: '''
+                # Update the list of packages
+                sudo apt update;
+                #Install pre-requisite packages.
+                sudo apt install -y wget apt-transport-https software-properties-common;
+                #Download the Microsoft repository GPG keys
+                wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb";
+                #Register the Microsoft repository GPG keys
+                sudo dpkg -i packages-microsoft-prod.deb;
+                #Update the list of packages after we added packages.microsoft.com
+                sudo apt update;
+                #Install PowerShell
+                sudo apt install -y powershell;
+                #Start PowerShell
+                pwsh
+                '''
+    }
   }
 }
 
@@ -236,3 +287,4 @@ output adminUsername string = vmUserName
 output hostname string = publicIp.properties.dnsSettings.fqdn
 output sshCommand string = 'ssh ${vmUserName}@${publicIp.properties.dnsSettings.fqdn}'
 output vmname string = vmName
+//output publicIp string = publicIp.properties.ipAddress

@@ -1,0 +1,42 @@
+// Linter Configuration - https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-config-linter
+
+{
+    "analyzers": {
+      "core": {
+        "rules": {
+          "no-deployments-resources": {
+            "level": "warning",
+            "enabled": true
+          },
+          "no-unused-params": {
+            "level": "warning",
+            "enabled": true
+          },
+          "no-unused-vars": {
+            "level": "warning",
+            "enabled": true
+          },
+          "use-parent-property": {
+            "level": "warning",
+            "enabled": false
+          },
+          "secure-parameter-default": {
+            "level": "warning",
+            "enabled": false
+          },
+          "no-unnecessary-dependson": {
+            "level": "off",
+            "enabled": false
+          },
+          "use-recent-api-versions": {
+           "level": "off",
+           "maxAllowedAgeInDays": 730
+         },
+          "use-stable-vm-image": {
+           "level": "warning",
+           "enabled": true
+        }
+      }
+    }
+  }
+}

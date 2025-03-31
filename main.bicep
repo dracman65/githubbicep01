@@ -56,7 +56,7 @@ param rgtags object = {
 }
 
 // Selected Linux VM Module \\
-module linuxwindowsvm './modules/linuxwinvm/linuxvm.bicep' = {
+module linuxvm './modules/linuxwinvm/linuxvm.bicep' = {
   scope: ghtstresgrp01
   name: vmName
   params: {
@@ -145,3 +145,5 @@ param kvtags object = {
   Deployment: 'Bicep'
   Date: '03-26-25'
 }
+
+//output publicIp string = linuxvm.outputs.publicIp
