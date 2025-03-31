@@ -65,7 +65,7 @@ jobs:
       with:
         type: deployment
         operation: create
-        name: Test
+        name: GHBicepTestDeployment
         location: eastus2
         scope: subscription
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
