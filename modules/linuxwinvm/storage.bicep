@@ -84,6 +84,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
+// Blog Container \\
 resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
   #disable-next-line use-parent-property
   name: '${storageAccount.name}/default/${containerName}'
