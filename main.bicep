@@ -145,5 +145,3 @@ param kvtags object = {
   Deployment: 'Bicep'
   Date: '03-26-25'
 }
-
-//output publicIp string = linuxvm.outputs.publicIp
