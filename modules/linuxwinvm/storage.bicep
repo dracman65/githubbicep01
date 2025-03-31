@@ -1,4 +1,4 @@
-// Creates a storage account, private endpoints and DNS zones
+// Creates a storage account \\
 @description('Azure region of the deployment')
 param location string
 
