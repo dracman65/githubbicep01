@@ -1,6 +1,6 @@
 targetScope = 'subscription'
 
-//Parameters
+// Parameters \\
 param location string
 // param tags string
 param ghdemorg01 string
@@ -12,14 +12,14 @@ param nkvname string
 //param keyvaultname string
 param uamiObjectId string
 
-// Variables
+// Variables \\
 var baseName = substring(uniqueString(deployment().name), 0, 6)
 
 // Create a short, unique suffix, that will be unique to each resource group
 //var uniqueSuffix = substring(uniqueString(deployment().name), 0, 6)
 var uniqueSuffix2 = substring(uniqueString(environment().name), 0, 6)
 
-// Functions
+// Functions \\
 // Remove hyphens and other non-alphanumeric characters from resource names
 func sanitizeResourceName(value string) string => toLower(removeTrailingHyphen(removeColons(removeCommas(removeDots(removeSemicolons(removeUnderscores(removeWhiteSpaces(value))))))))
 func removeTrailingHyphen(value string) string => endsWith(value, '-') ? substring(value, 0, length(value)-1) : value
@@ -101,7 +101,7 @@ param vnettags object = {
   Date: '03-26-25'
 }
 
-//Storage Account
+//Storage Account Module \\
 module storage './modules/linuxwinvm/storage.bicep' = {
   scope: ghtstresgrp01
   name: 'st${baseName}-deployment'
@@ -132,7 +132,6 @@ module keyVault './modules/linuxwinvm/keyvault.bicep' = {
     location: location
     enableSoftDelete: true
     kvtags: kvtags
-    //keyvaultname: keyvaultname
     uamiObjectId: uamiObjectId
   }
 }
