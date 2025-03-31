@@ -30,11 +30,17 @@ param dnsLabelPrefix string = toLower('${vmName}-${uniqueString(resourceGroup().
 #disable-next-line secure-parameter-default
 param linuxversion string = 'Ubuntu-2204-LTS'
 
+// Variables \\
 var publicIPAddressName = 'ip${baseName}'
 var networkInterfaceName = 'nic${baseName}'
 
 var baseName = substring(uniqueString(deployment().name), 0, 6)
 var vmSize = 'Standard_B1ms' //'Standard_DS1_v2' //Standard_B1s
+var extensionName = 'GuestAttestation'
+var extensionPublisher = 'Microsoft.Azure.Security.LinuxAttestation'
+var extensionVersion = '1.0'
+var maaTenantName = 'GuestAttestation'
+var maaEndpoint = substring('emptystring', 0, 0)
 
 // New Linux Sizes for Azure: https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/?msockid=211aac7bdedb641f0560b9dfdf7665bb
 
@@ -53,12 +59,6 @@ var securityProfileJson = {
   }
   securityType: securityType
 }
-
-var extensionName = 'GuestAttestation'
-var extensionPublisher = 'Microsoft.Azure.Security.LinuxAttestation'
-var extensionVersion = '1.0'
-var maaTenantName = 'GuestAttestation'
-var maaEndpoint = substring('emptystring', 0, 0)
 
 // Image Reference Variables
 var imageReference  = {
@@ -82,6 +82,7 @@ var imageReference  = {
   }
 }
 
+// SSH Key or Password \\
 @description('SSH Key or password for the Virtual Machine. SSH key is recommended.')
 @secure()
 param vmPass string
@@ -98,6 +99,7 @@ var linuxConfiguration = {
   }
 }
 
+// Linux Virtual Machine \\
 resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
   name: vmName
   location: location
@@ -137,6 +139,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-09-01' = {
   }
 }
 
+// VM Extension #1 \\
 resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = if (securityType == 'TrustedLaunch' && securityProfileJson.uefiSettings.secureBootEnabled && securityProfileJson.uefiSettings.vTpmEnabled) {
   dependsOn: [vm]
   parent: vm
@@ -159,6 +162,7 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' =
   }
 }
 
+// Network Interface \\
 resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   name: networkInterfaceName
   location: location
@@ -183,6 +187,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   }
 }
 
+// Public IP \\
 resource publicIp 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   name: publicIPAddressName
   location: location
@@ -198,6 +203,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   }
 }
 
+// Network Security Group \\
 resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
   name: 'nsg${baseName}'
   location: location
@@ -233,6 +239,7 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-0
   }
 }
 
+// VM Script - NGINX \\
 resource deploynginx 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' = {
   dependsOn: [vmExtension]
   parent: vm
@@ -256,6 +263,7 @@ resource deploynginx 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' 
    }
 }
 
+// VM PowerShell \\
 resource deploypwsh 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' = {
   dependsOn: [vmExtension]
   parent: vm
@@ -283,6 +291,7 @@ resource deploypwsh 'Microsoft.Compute/virtualMachines/runCommands@2022-03-01' =
   }
 }
 
+// Outputs \\
 output adminUsername string = vmUserName
 output hostname string = publicIp.properties.dnsSettings.fqdn
 output sshCommand string = 'ssh ${vmUserName}@${publicIp.properties.dnsSettings.fqdn}'
